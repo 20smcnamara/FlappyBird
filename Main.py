@@ -3,11 +3,10 @@ import random
 
 pygame.init()
 font = pygame.font.Font('freesansbold.ttf', 20)
-size = [800, 800]
+size = [400, 400]
 screen = pygame.display.set_mode(size)
 pygame.display.set_caption("Flappy Bird")
-gravity = size[1] / 200000
-gap = 200
+gap = size[1] / 4
 bird_x = int(size[0] / 6)
 
 
@@ -16,14 +15,14 @@ class Bird:
     def __init__(self):
         self.delta = 0
         self.y = int(size[1] / 2)
-        self.radius = 25
+        self.radius = int(size[1] / 32)
 
     def receive_touch(self, event):
         if event.key == 32:
             self.flap()
 
     def flap(self):
-        self.delta = -1
+        self.delta = -size[1] / 60 / 2
 
     def update(self):
         self.delta += gravity
@@ -56,10 +55,10 @@ class Tube:
         self.x = cords
         self.passed = False
         self.width = size[1] / 16
-        self.gap_top = random.randint(100, size[1] - 100 - gap)
+        self.gap_top = random.randint(int(size[1] / 6), int(size[1] / 6 * 5 - gap))
 
     def update(self):
-        self.x -= size[0] / 1067
+        self.x -= int(size[0] / 45 / 2)  # 1067
         top_rect = pygame.Rect(int(self.x), 0, self.width, self.gap_top)
         bottom_rect = pygame.Rect(int(self.x), self.gap_top + gap, self.width, size[1] - (gap + self.gap_top))
         if bird.check_collision(top_rect) or bird.check_collision(bottom_rect):
@@ -108,6 +107,9 @@ bird = Bird()
 tubes = []
 create_tubes()
 score = 0
+clock = pygame.time.Clock()
+clock.tick(1)
+gravity = size[1] / 60 / 150
 
 while True:
     screen.fill((30, 209, 219))
@@ -124,3 +126,6 @@ while True:
             bird.receive_touch(event)
     draw_gui()
     pygame.display.update()
+    gravity = size[1] / 60 / 75
+    clock.tick(60)
+
